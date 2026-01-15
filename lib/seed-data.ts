@@ -1,19 +1,23 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Supabase Admin Client
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
+export async function seedDemoData() {
+  console.log('🌱 Starting seed process...');
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('❌ Missing Supabase environment variables');
+    return { success: false, message: 'Missing Supabase environment variables' };
+  }
+
+  // Initialize Supabase Admin Client
+  const supabaseAdmin = createClient(supabaseUrl, supabaseKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false
     }
-  }
-);
-
-export async function seedDemoData() {
-  console.log('🌱 Starting seed process...');
+  });
 
   try {
     // 1. Get or Create a Demo Company
