@@ -4,7 +4,14 @@ import { useState } from "react";
 import { EmployeeTable } from "@/components/employees/employee-table";
 import { useEmployees } from "@/hooks/use-employees";
 import { cn } from "@/lib/utils";
-import { Loader2, Plus, Search } from "lucide-react";
+import { Loader2, Plus, Search, Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { AddEmployeeModal } from "@/components/employees/add-employee-modal";
 
 export default function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -12,18 +19,31 @@ export default function DashboardPage() {
 
   // Derived stats
   const expiringSoonCount = employees?.filter(emp => {
-    const activeVisa = emp.visas?.find(v => v.application_status === 'active');
+    const activeVisa = emp.visas?.find(v => v.application_status === 'active' || v.status === 'valid');
     if (!activeVisa) return false;
     const days = Math.ceil((new Date(activeVisa.expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
     return days >= 0 && days < 90;
   }).length || 0;
 
   const expiredCount = employees?.filter(emp => {
-    const activeVisa = emp.visas?.find(v => v.application_status === 'active');
+    const activeVisa = emp.visas?.find(v => v.application_status === 'active' || v.status === 'valid' || v.status === 'expired');
     if (!activeVisa) return false;
     const days = (new Date(activeVisa.expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
     return days < 0;
   }).length || 0;
+
+  // Compliance Health Calculation
+  const totalEmployees = employees?.length || 0;
+  const validVisasCount = employees?.filter(emp => {
+    const activeVisa = emp.visas?.find(v => v.application_status === 'active' || v.status === 'valid');
+    if (!activeVisa) return false;
+    const days = (new Date(activeVisa.expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
+    return days >= 0;
+  }).length || 0;
+
+  const complianceHealth = totalEmployees === 0 
+    ? 100 
+    : Math.round((validVisasCount / totalEmployees) * 100);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -52,15 +72,17 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-bold text-secondary">Workforce Overview</h1>
             <p className="text-muted-foreground mt-1 text-sm">Manage TCN compliance and visa renewals.</p>
           </div>
-          <button className="bg-primary text-white px-4 py-2 rounded-md font-medium text-sm hover:bg-primary/90 transition-colors flex items-center gap-2">
-            <Plus className="w-4 h-4" />
-            Add Employee
-          </button>
+          <AddEmployeeModal>
+            <button className="bg-primary text-white px-4 py-2 rounded-md font-medium text-sm hover:bg-primary/90 transition-colors flex items-center gap-2">
+              <Plus className="w-4 h-4" />
+              Add Employee
+            </button>
+          </AddEmployeeModal>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <StatCard title="Total TCNs" value={isLoading ? "..." : (employees?.length || 0).toString()} />
+          <StatCard title="Total TCNs" value={isLoading ? "..." : totalEmployees.toString()} />
           <StatCard 
             title="Expiring Soon" 
             value={isLoading ? "..." : expiringSoonCount.toString()} 
@@ -71,7 +93,13 @@ export default function DashboardPage() {
             value={isLoading ? "..." : expiredCount.toString()} 
             color="text-error" 
           />
-          <StatCard title="Compliance Health" value={isLoading ? "..." : "94%"} />
+          <StatCard 
+            title="Compliance Health" 
+            value={isLoading ? "..." : `${complianceHealth}%`} 
+            color={complianceHealth < 80 ? "text-error" : complianceHealth < 100 ? "text-accent" : "text-success"}
+            hasInfo
+            infoText="Percentage of employees with valid (non-expired) visas."
+          />
         </div>
 
         {/* Employee Table */}
@@ -107,10 +135,38 @@ export default function DashboardPage() {
   );
 }
 
-function StatCard({ title, value, color = "text-secondary" }: { title: string, value: string, color?: string }) {
+function StatCard({ 
+  title, 
+  value, 
+  color = "text-secondary", 
+  hasInfo = false, 
+  infoText = "" 
+}: { 
+  title: string, 
+  value: string, 
+  color?: string,
+  hasInfo?: boolean,
+  infoText?: string
+}) {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border">
-      <h3 className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">{title}</h3>
+    <div className="bg-white p-6 rounded-lg shadow-sm border relative">
+      <div className="flex items-center gap-1">
+        <h3 className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">{title}</h3>
+        {hasInfo && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="text-muted-foreground hover:text-secondary">
+                  <Info className="w-3 h-3" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="max-w-xs">{infoText}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
       <p className={cn("text-3xl font-bold mt-2", color)}>{value}</p>
     </div>
   );
