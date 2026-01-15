@@ -26,19 +26,21 @@ export function VisaStatusBadge({ expiryDate }: VisaStatusBadgeProps) {
 }
 
 interface EmploymentStatusBadgeProps {
-  status: 'active' | 'inactive' | 'terminated';
+  status: 'active' | 'pending' | 'inactive' | 'on_leave' | 'terminated';
 }
 
 export function EmploymentStatusBadge({ status }: EmploymentStatusBadgeProps) {
   const variants = {
     active: "success",
+    pending: "warning",
     inactive: "secondary",
+    on_leave: "info",
     terminated: "danger",
   } as const;
 
   return (
     <Badge variant={variants[status] || "outline"} className="uppercase text-[10px]">
-      {status}
+      {status.replace('_', ' ')}
     </Badge>
   );
 }
