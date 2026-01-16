@@ -25,7 +25,7 @@ export async function seedDemoData() {
         email: 'hr@maltatechcorp.com',
         city: 'Valletta',
         subscription_tier: 'professional'
-      }, { onConflict: 'name' })
+      }, { onConflict: 'registration_number' })
       .select()
       .single();
 

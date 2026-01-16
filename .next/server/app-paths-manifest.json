@@ -1,4 +1,5 @@
 {
+  "/api/seed/route": "app/api/seed/route.js",
   "/register/page": "app/register/page.js",
   "/page": "app/page.js"
 }
