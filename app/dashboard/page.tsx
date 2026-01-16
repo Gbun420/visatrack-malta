@@ -45,28 +45,21 @@ export default function DashboardPage() {
     ? 100 
     : Math.round((validVisasCount / totalEmployees) * 100);
 
+  const getHealthColor = (health: number) => {
+    if (health >= 90) return "text-success"; // Green (#10B981)
+    if (health >= 70) return "text-accent";  // Yellow (#F59E0B)
+    return "text-error";                     // Red (#EF4444)
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
+      {/* ... header ... */}
       <header className="border-b bg-white">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded flex items-center justify-center text-white font-bold text-xl">
-              V
-            </div>
-            <span className="text-xl font-bold tracking-tight text-secondary">
-              VisaTrack <span className="text-primary">Malta</span>
-            </span>
-          </div>
-          <nav className="flex gap-6">
-            <span className="text-sm font-medium border-b-2 border-primary py-5">Employees</span>
-            <span className="text-sm font-medium text-muted-foreground py-5 hover:text-secondary cursor-pointer">Documents</span>
-            <span className="text-sm font-medium text-muted-foreground py-5 hover:text-secondary cursor-pointer">Reports</span>
-          </nav>
-        </div>
+        {/* ... */}
       </header>
 
       <main className="flex-1 container mx-auto px-4 py-8">
+        {/* ... titles ... */}
         <div className="flex justify-between items-end mb-8">
           <div>
             <h1 className="text-3xl font-bold text-secondary">Workforce Overview</h1>
@@ -96,9 +89,9 @@ export default function DashboardPage() {
           <StatCard 
             title="Compliance Health" 
             value={isLoading ? "..." : `${complianceHealth}%`} 
-            color={complianceHealth < 80 ? "text-error" : complianceHealth < 100 ? "text-accent" : "text-success"}
+            color={isLoading ? "text-secondary" : getHealthColor(complianceHealth)}
             hasInfo
-            infoText="Percentage of employees with valid (non-expired) visas."
+            infoText="Compliance Health = Employees with valid visas / Total employees"
           />
         </div>
 
