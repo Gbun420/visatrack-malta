@@ -20,12 +20,12 @@ export function Navigation() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <div className="w-9 h-9 bg-gradient-to-br from-primary to-teal-600 rounded-lg flex items-center justify-center shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-shadow">
-                            <Shield className="w-5 h-5 text-white" />
+                    <Link href="/" className="flex items-center gap-3 group">
+                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-premium group-hover:shadow-premium-hover transition-all duration-300">
+                            <Shield className="w-6 h-6 text-white" />
                         </div>
-                        <span className="text-xl font-bold bg-gradient-to-r from-primary to-teal-600 bg-clip-text text-transparent">
-                            VisaTrack
+                        <span className="text-2xl font-display font-bold text-primary tracking-tight">
+                            VisaTrack<span className="text-secondary">Malta</span>
                         </span>
                     </Link>
 
@@ -43,18 +43,18 @@ export function Navigation() {
                     </div>
 
                     {/* CTA Buttons */}
-                    <div className="hidden md:flex items-center gap-3">
+                    <div className="hidden md:flex items-center gap-4">
                         <Link
                             href="/login"
-                            className="text-sm font-medium text-gray-700 hover:text-primary transition-colors px-4 py-2"
+                            className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors px-4 py-2"
                         >
                             Sign In
                         </Link>
                         <Link
                             href="/register"
-                            className="text-sm font-medium text-white bg-gradient-to-r from-primary to-teal-600 px-5 py-2.5 rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all hover:-translate-y-0.5"
+                            className="text-sm font-semibold text-white bg-primary px-6 py-3 rounded-xl hover:bg-slate-800 shadow-premium hover:shadow-premium-hover transition-all duration-300 hover:-translate-y-0.5"
                         >
-                            Get Started Free
+                            Get Started
                         </Link>
                     </div>
 

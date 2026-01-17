@@ -1,7 +1,7 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { differenceInDays, parseISO } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface VisaStatusBadgeProps {
   expiryDate?: string;
@@ -9,7 +9,11 @@ interface VisaStatusBadgeProps {
 
 export function VisaStatusBadge({ expiryDate }: VisaStatusBadgeProps) {
   if (!expiryDate) {
-    return <Badge variant="outline" className="opacity-50 text-[10px] uppercase">No Record</Badge>;
+    return (
+      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-400 border border-slate-200">
+        No Record
+      </span>
+    );
   }
 
   const today = new Date();
@@ -17,12 +21,26 @@ export function VisaStatusBadge({ expiryDate }: VisaStatusBadgeProps) {
   const daysUntilExpiry = differenceInDays(expiry, today);
 
   if (daysUntilExpiry < 0) {
-    return <Badge variant="danger" className="uppercase text-[10px]">Expired</Badge>;
+    return (
+      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-50 text-red-600 border border-red-100 shadow-sm">
+        Expired
+      </span>
+    );
   }
+
   if (daysUntilExpiry < 90) {
-    return <Badge variant="warning" className="uppercase text-[10px]">Expiring ({daysUntilExpiry}d)</Badge>;
+    return (
+      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-600 border border-amber-100 shadow-sm">
+        Expiring ({daysUntilExpiry}d)
+      </span>
+    );
   }
-  return <Badge variant="success" className="uppercase text-[10px]">Valid</Badge>;
+
+  return (
+    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-green-50 text-green-600 border border-green-100 shadow-sm">
+      Valid
+    </span>
+  );
 }
 
 interface EmploymentStatusBadgeProps {
@@ -30,17 +48,20 @@ interface EmploymentStatusBadgeProps {
 }
 
 export function EmploymentStatusBadge({ status }: EmploymentStatusBadgeProps) {
-  const variants = {
-    active: "success",
-    pending: "warning",
-    inactive: "secondary",
-    on_leave: "info",
-    terminated: "danger",
-  } as const;
+  const styles = {
+    active: "bg-green-50 text-green-600 border-green-100",
+    pending: "bg-amber-50 text-amber-600 border-amber-100",
+    inactive: "bg-slate-50 text-slate-500 border-slate-100",
+    on_leave: "bg-blue-50 text-blue-600 border-blue-100",
+    terminated: "bg-red-50 text-red-600 border-red-100",
+  };
 
   return (
-    <Badge variant={variants[status] || "outline"} className="uppercase text-[10px]">
+    <span className={cn(
+      "inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm border",
+      styles[status] || "bg-slate-100 text-slate-400 border-slate-200"
+    )}>
       {status.replace('_', ' ')}
-    </Badge>
+    </span>
   );
 }

@@ -77,51 +77,50 @@ export function Sidebar() {
     return (
         <aside
             className={cn(
-                "fixed left-0 top-0 z-40 h-screen bg-gray-900 text-white transition-all duration-300 flex flex-col",
+                "fixed left-0 top-0 z-40 h-screen bg-primary text-white transition-all duration-300 flex flex-col shadow-2xl",
                 collapsed ? "w-20" : "w-64"
             )}
         >
             {/* Logo */}
-            <div className="flex items-center justify-between h-16 px-4 border-b border-gray-800">
+            <div className="flex items-center justify-between h-20 px-6 border-b border-white/5">
                 <Link href="/dashboard" className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-primary to-teal-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Shield className="w-5 h-5 text-white" />
+                    <div className="w-10 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                        <Shield className="w-6 h-6 text-white" />
                     </div>
                     {!collapsed && (
-                        <span className="text-lg font-bold bg-gradient-to-r from-primary to-teal-400 bg-clip-text text-transparent">
-                            VisaTrack
+                        <span className="text-xl font-display font-bold tracking-tight text-white">
+                            VisaTrack<span className="text-secondary">Malta</span>
                         </span>
                     )}
                 </Link>
-                <button
-                    onClick={() => setCollapsed(!collapsed)}
-                    className="p-1.5 rounded-lg hover:bg-gray-800 transition-colors text-gray-400"
-                >
-                    {collapsed ? (
-                        <ChevronRight className="w-5 h-5" />
-                    ) : (
+                {!collapsed && (
+                    <button
+                        onClick={() => setCollapsed(!collapsed)}
+                        title="Collapse Sidebar"
+                        className="p-1.5 rounded-lg hover:bg-white/5 transition-colors text-white/40 hover:text-white"
+                    >
                         <ChevronLeft className="w-5 h-5" />
-                    )}
-                </button>
+                    </button>
+                )}
             </div>
 
             {/* Main Navigation */}
-            <nav className="flex-1 py-6 px-3 space-y-1">
+            <nav className="flex-1 py-8 px-4 space-y-2">
                 {mainNavItems.map((item) => (
                     <Link
                         key={item.href}
                         href={item.href}
                         className={cn(
-                            "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all group relative",
+                            "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group relative",
                             isActive(item.href)
-                                ? "bg-primary text-white shadow-lg shadow-primary/30"
-                                : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                                ? "bg-secondary text-white shadow-premium"
+                                : "text-slate-400 hover:bg-white/5 hover:text-white"
                         )}
                     >
                         <item.icon className={cn("w-5 h-5 flex-shrink-0", isActive(item.href) && "text-white")} />
-                        {!collapsed && <span className="font-medium">{item.label}</span>}
+                        {!collapsed && <span className="font-semibold text-sm tracking-wide">{item.label}</span>}
                         {collapsed && (
-                            <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                            <div className="absolute left-full ml-4 px-3 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 shadow-premium border border-white/10">
                                 {item.label}
                             </div>
                         )}
@@ -130,22 +129,22 @@ export function Sidebar() {
             </nav>
 
             {/* Bottom Navigation */}
-            <div className="py-4 px-3 border-t border-gray-800 space-y-1">
+            <div className="py-6 px-4 border-t border-white/5 space-y-2">
                 {bottomNavItems.map((item) => (
                     <Link
                         key={item.label}
                         href={item.href}
                         className={cn(
-                            "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all group relative",
+                            "flex items-center gap-3 px-4 py-3 rounded-xl transition-all group relative",
                             isActive(item.href)
-                                ? "bg-gray-800 text-white"
-                                : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                                ? "bg-white/10 text-white"
+                                : "text-slate-400 hover:bg-white/5 hover:text-white"
                         )}
                     >
                         <item.icon className="w-5 h-5 flex-shrink-0" />
-                        {!collapsed && <span className="font-medium">{item.label}</span>}
+                        {!collapsed && <span className="font-semibold text-sm tracking-wide">{item.label}</span>}
                         {collapsed && (
-                            <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                            <div className="absolute left-full ml-4 px-3 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 shadow-premium border border-white/10">
                                 {item.label}
                             </div>
                         )}
@@ -154,12 +153,12 @@ export function Sidebar() {
 
                 <button
                     onClick={handleSignOut}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-gray-400 hover:bg-red-600/20 hover:text-red-400 group relative"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-slate-400 hover:bg-red-500/10 hover:text-red-400 group relative"
                 >
                     <LogOut className="w-5 h-5 flex-shrink-0" />
-                    {!collapsed && <span className="font-medium">Sign Out</span>}
+                    {!collapsed && <span className="font-semibold text-sm tracking-wide">Sign Out</span>}
                     {collapsed && (
-                        <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                        <div className="absolute left-full ml-4 px-3 py-2 bg-red-600 text-white text-xs font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
                             Sign Out
                         </div>
                     )}

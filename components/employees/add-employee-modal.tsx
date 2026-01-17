@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { format } from "date-fns"
-import { CalendarIcon, Loader2 } from "lucide-react"
+import { CalendarIcon, Loader2, UserPlus, ShieldCheck } from "lucide-react"
 import { useQueryClient } from "@tanstack/react-query"
 
 import { Button } from "@/components/ui/button"
@@ -113,17 +113,17 @@ export function AddEmployeeModal({ children, open, onOpenChange }: AddEmployeeMo
       }
 
       toast({
-        title: "Success",
-        description: "Employee added successfully.",
+        title: "Personnel Registered",
+        description: `${values.first_name} ${values.last_name} has been added to the registry.`,
       })
-      
+
       form.reset()
       if (handleOpenChange) handleOpenChange(false)
       queryClient.invalidateQueries({ queryKey: ["employees"] })
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Registration Error",
         description: error.message,
       })
     }
@@ -132,239 +132,282 @@ export function AddEmployeeModal({ children, open, onOpenChange }: AddEmployeeMo
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Add New Employee</DialogTitle>
-          <DialogDescription>
-            Enter the details of the new TCN employee. Click save when you&apos;re done.
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="first_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First Name <span className="text-red-500">*</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="John" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="last_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Name <span className="text-red-500">*</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+      <DialogContent className="sm:max-w-[640px] p-0 overflow-hidden border-none rounded-[32px] shadow-2xl">
+        <div className="bg-primary p-8 text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -mr-32 -mt-32" />
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20">
+                <UserPlus className="w-6 h-6 text-white" />
+              </div>
             </div>
+            <DialogTitle className="text-3xl font-display font-bold tracking-tight mb-2">Personnel Registration</DialogTitle>
+            <DialogDescription className="text-white/60 font-medium">
+              Initialize a new employee record within the Maltese TCN compliance framework.
+            </DialogDescription>
+          </div>
+        </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="john.doe@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone</FormLabel>
-                    <FormControl>
-                      <Input placeholder="+356 9999 9999" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="passport_number"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Passport Number <span className="text-red-500">*</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="A1234567" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="nationality"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nationality <span className="text-red-500">*</span></FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select country" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Philippines">Philippines</SelectItem>
-                        <SelectItem value="India">India</SelectItem>
-                        <SelectItem value="Pakistan">Pakistan</SelectItem>
-                        <SelectItem value="Nepal">Nepal</SelectItem>
-                        <SelectItem value="Serbia">Serbia</SelectItem>
-                        <SelectItem value="Colombia">Colombia</SelectItem>
-                        <SelectItem value="United Kingdom">United Kingdom</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-             <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="passport_expiry"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Passport Expiry</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
+        <div className="p-8 max-h-[70vh] overflow-y-auto custom-scrollbar bg-white">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              {/* Identity Section */}
+              <div className="space-y-4">
+                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <span className="w-2 h-2 bg-secondary rounded-full" />
+                  Identity Details
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="first_name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider">First Name</FormLabel>
                         <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
+                          <Input placeholder="Given name" className="h-12 rounded-xl bg-slate-50 border-none shadow-inner focus:ring-4 focus:ring-secondary/5 transition-all" {...field} />
                         </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-               <FormField
-                control={form.control}
-                name="employment_start_date"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Start Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="last_name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider">Last Name</FormLabel>
                         <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
+                          <Input placeholder="Family name" className="h-12 rounded-xl bg-slate-50 border-none shadow-inner focus:ring-4 focus:ring-secondary/5 transition-all" {...field} />
                         </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-             </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="department"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Department</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Operations" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="position"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Position</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Driver" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider">Company Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="employee@org.mt" className="h-12 rounded-xl bg-slate-50 border-none shadow-inner focus:ring-4 focus:ring-secondary/5 transition-all" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider">Contact Number</FormLabel>
+                        <FormControl>
+                          <Input placeholder="+356 XXXX XXXX" className="h-12 rounded-xl bg-slate-50 border-none shadow-inner focus:ring-4 focus:ring-secondary/5 transition-all" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
 
-            <DialogFooter>
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Save Employee
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+              {/* Compliance Section */}
+              <div className="space-y-4">
+                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <span className="w-2 h-2 bg-secondary rounded-full" />
+                  Compliance & Documentation
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="passport_number"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider">Passport Identifier</FormLabel>
+                        <FormControl>
+                          <Input placeholder="A0000000" className="h-12 rounded-xl bg-slate-50 border-none shadow-inner focus:ring-4 focus:ring-secondary/5 transition-all" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="nationality"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider">Nationality</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-none shadow-inner focus:ring-4 focus:ring-secondary/5 transition-all">
+                              <SelectValue placeholder="Select Origin" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="rounded-xl border-slate-100 shadow-xl">
+                            <SelectItem value="Philippines">Philippines</SelectItem>
+                            <SelectItem value="India">India</SelectItem>
+                            <SelectItem value="Pakistan">Pakistan</SelectItem>
+                            <SelectItem value="Nepal">Nepal</SelectItem>
+                            <SelectItem value="Serbia">Serbia</SelectItem>
+                            <SelectItem value="Colombia">Colombia</SelectItem>
+                            <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="passport_expiry"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider">Passport Expiry</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "h-12 rounded-xl bg-slate-50 border-none shadow-inner text-left font-bold text-sm",
+                                  !field.value && "text-slate-400"
+                                )}
+                              >
+                                {field.value ? (
+                                  format(field.value, "PPP")
+                                ) : (
+                                  <span>Pick a date</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 text-slate-300" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0 border-none shadow-2xl rounded-2xl overflow-hidden" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) =>
+                                date < new Date("1900-01-01")
+                              }
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="employment_start_date"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider">Onboarding Date</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "h-12 rounded-xl bg-slate-50 border-none shadow-inner text-left font-bold text-sm",
+                                  !field.value && "text-slate-400"
+                                )}
+                              >
+                                {field.value ? (
+                                  format(field.value, "PPP")
+                                ) : (
+                                  <span>Select date</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 text-slate-300" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0 border-none shadow-2xl rounded-2xl overflow-hidden" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) =>
+                                date < new Date("1900-01-01")
+                              }
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Organizational Section */}
+              <div className="space-y-4">
+                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <span className="w-2 h-2 bg-secondary rounded-full" />
+                  Organizational Placement
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="department"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider">Department</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Operations / Tech" className="h-12 rounded-xl bg-slate-50 border-none shadow-inner focus:ring-4 focus:ring-secondary/5 transition-all" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="position"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider">Formal Designation</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Job Title" className="h-12 rounded-xl bg-slate-50 border-none shadow-inner focus:ring-4 focus:ring-secondary/5 transition-all" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-50">
+                <Button
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
+                  className="w-full h-14 bg-primary text-white rounded-2xl font-bold text-sm tracking-widest uppercase shadow-premium hover:shadow-premium-hover transition-all hover:-translate-y-0.5"
+                >
+                  {form.formState.isSubmitting ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Synchronizing...
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5" />
+                      Commit Registration
+                    </div>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
       </DialogContent>
     </Dialog>
   )

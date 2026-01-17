@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, CheckCircle2, Loader2 } from "lucide-react";
+import { Shield, CheckCircle2, Loader2, ChevronLeft } from "lucide-react";
 
 export default function RegisterPage() {
-    const [step, setStep] = useState(1);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -29,8 +29,8 @@ export default function RegisterPage() {
         if (password !== confirmPassword) {
             toast({
                 variant: "destructive",
-                title: "Passwords don't match",
-                description: "Please make sure your passwords match.",
+                title: "Validation Error",
+                description: "Password confirmation does not match.",
             });
             return;
         }
@@ -38,8 +38,8 @@ export default function RegisterPage() {
         if (!acceptTerms) {
             toast({
                 variant: "destructive",
-                title: "Terms Required",
-                description: "Please accept the terms and conditions.",
+                title: "Requirement Missing",
+                description: "You must accept the terms of service to proceed.",
             });
             return;
         }
@@ -47,7 +47,6 @@ export default function RegisterPage() {
         setIsLoading(true);
 
         try {
-            // Create user account
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email,
                 password,
@@ -61,13 +60,11 @@ export default function RegisterPage() {
 
             if (authError) throw authError;
 
-            // Show success message
             toast({
-                title: "Account created!",
-                description: "Please check your email to verify your account.",
+                title: "Provisioning Complete",
+                description: "Please verify your corporate identity via the email sent.",
             });
 
-            // Redirect to login
             router.push("/login");
         } catch (error: any) {
             toast({
@@ -81,200 +78,163 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen flex">
-            {/* Left side - Form */}
-            <div className="flex-1 flex items-center justify-center px-4 py-12">
-                <div className="w-full max-w-md">
-                    {/* Logo */}
-                    <Link href="/" className="inline-flex items-center gap-2 mb-8">
-                        <div className="w-10 h-10 bg-gradient-to-br from-primary to-teal-500 rounded-lg flex items-center justify-center">
-                            <Shield className="w-5 h-5 text-white" />
-                        </div>
-                        <span className="text-xl font-bold bg-gradient-to-r from-primary to-teal-500 bg-clip-text text-transparent">
-                            VisaTrack
-                        </span>
+        <main className="min-h-screen relative flex items-center justify-center bg-primary overflow-hidden px-4 py-12">
+            {/* Background Elements */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-0 left-0 w-[800px] h-[800px] bg-secondary/10 rounded-full blur-[120px] -ml-64 -mt-64" />
+                <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] -mr-32 -mb-32" />
+            </div>
+
+            <div className="relative z-10 w-full max-w-[560px]">
+                {/* Back Link */}
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="mb-8"
+                >
+                    <Link href="/login" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-bold text-sm tracking-wide">
+                        <ChevronLeft className="w-4 h-4" />
+                        Back to Login
                     </Link>
+                </motion.div>
 
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                        Create your account
-                    </h1>
-                    <p className="text-gray-600 mb-8">
-                        Start your 14-day free trial. No credit card required.
-                    </p>
-
-                    <form onSubmit={handleRegister} className="space-y-5">
-                        {/* Full Name */}
-                        <div>
-                            <Label htmlFor="fullName">Full Name</Label>
-                            <Input
-                                id="fullName"
-                                type="text"
-                                placeholder="John Doe"
-                                value={fullName}
-                                onChange={(e) => setFullName(e.target.value)}
-                                required
-                                className="mt-1"
-                            />
+                {/* Registration Card */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.1 }}
+                    className="bg-white rounded-[40px] overflow-hidden shadow-2xl"
+                >
+                    <div className="bg-slate-50 border-b border-slate-100 p-10 text-center">
+                        <div className="mx-auto w-14 h-14 bg-primary rounded-2xl flex items-center justify-center shadow-premium mb-6">
+                            <Shield className="w-8 h-8 text-white" />
                         </div>
-
-                        {/* Email */}
-                        <div>
-                            <Label htmlFor="email">Work Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="you@company.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                className="mt-1"
-                            />
-                        </div>
-
-                        {/* Company Name */}
-                        <div>
-                            <Label htmlFor="companyName">Company Name</Label>
-                            <Input
-                                id="companyName"
-                                type="text"
-                                placeholder="Acme Corporation"
-                                value={companyName}
-                                onChange={(e) => setCompanyName(e.target.value)}
-                                required
-                                className="mt-1"
-                            />
-                        </div>
-
-                        {/* Password */}
-                        <div>
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                minLength={8}
-                                className="mt-1"
-                            />
-                            <p className="text-xs text-gray-500 mt-1">
-                                Must be at least 8 characters
-                            </p>
-                        </div>
-
-                        {/* Confirm Password */}
-                        <div>
-                            <Label htmlFor="confirmPassword">Confirm Password</Label>
-                            <Input
-                                id="confirmPassword"
-                                type="password"
-                                placeholder="••••••••"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                required
-                                className="mt-1"
-                            />
-                        </div>
-
-                        {/* Terms */}
-                        <div className="flex items-start gap-3">
-                            <input
-                                type="checkbox"
-                                id="terms"
-                                checked={acceptTerms}
-                                onChange={(e) => setAcceptTerms(e.target.checked)}
-                                className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                            />
-                            <label htmlFor="terms" className="text-sm text-gray-600">
-                                I agree to the{" "}
-                                <a href="#" className="text-primary hover:underline">
-                                    Terms of Service
-                                </a>{" "}
-                                and{" "}
-                                <a href="#" className="text-primary hover:underline">
-                                    Privacy Policy
-                                </a>
-                            </label>
-                        </div>
-
-                        {/* Submit */}
-                        <Button type="submit" className="w-full" disabled={isLoading}>
-                            {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            Create Account
-                        </Button>
-                    </form>
-
-                    <p className="text-center text-sm text-gray-600 mt-6">
-                        Already have an account?{" "}
-                        <Link href="/login" className="text-primary font-medium hover:underline">
-                            Sign in
-                        </Link>
-                    </p>
-                </div>
-            </div>
-
-            {/* Right side - Benefits */}
-            <div className="hidden lg:flex flex-1 bg-gradient-to-br from-primary to-teal-600 p-12 items-center justify-center">
-                <div className="max-w-md text-white">
-                    <h2 className="text-3xl font-bold mb-6">
-                        Join 500+ Maltese employers managing TCN compliance
-                    </h2>
-
-                    <div className="space-y-6">
-                        <div className="flex items-start gap-4">
-                            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                                <CheckCircle2 className="w-4 h-4" />
-                            </div>
-                            <div>
-                                <h3 className="font-semibold mb-1">Automated Tracking</h3>
-                                <p className="text-white/80 text-sm">
-                                    Never miss a visa expiry date with smart alerts at 90, 60, and 30 days.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-start gap-4">
-                            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                                <CheckCircle2 className="w-4 h-4" />
-                            </div>
-                            <div>
-                                <h3 className="font-semibold mb-1">Compliance Dashboard</h3>
-                                <p className="text-white/80 text-sm">
-                                    Real-time visibility into your workforce&apos;s documentation status.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-start gap-4">
-                            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                                <CheckCircle2 className="w-4 h-4" />
-                            </div>
-                            <div>
-                                <h3 className="font-semibold mb-1">Secure & GDPR Compliant</h3>
-                                <p className="text-white/80 text-sm">
-                                    Enterprise-grade security with full data protection compliance.
-                                </p>
-                            </div>
-                        </div>
+                        <h1 className="text-3xl font-display font-bold text-slate-900 tracking-tight mb-2">Establish Enterprise Account</h1>
+                        <p className="text-sm text-slate-400 font-bold uppercase tracking-[0.2em]">Malta TCN Compliance Framework</p>
                     </div>
 
-                    <div className="mt-12 p-6 bg-white/10 rounded-xl backdrop-blur-sm">
-                        <p className="text-white/90 italic mb-4">
-                            &quot;VisaTrack has reduced our compliance incidents by 95%. It&apos;s an essential tool for any Maltese employer with TCN workers.&quot;
-                        </p>
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-semibold">
-                                MB
+                    <div className="p-10">
+                        <form onSubmit={handleRegister} className="space-y-6">
+                            <div className="grid sm:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <Label htmlFor="fullName" className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Full Name</Label>
+                                    <Input
+                                        id="fullName"
+                                        type="text"
+                                        placeholder="Authorized Officer"
+                                        value={fullName}
+                                        onChange={(e) => setFullName(e.target.value)}
+                                        required
+                                        className="h-14 rounded-2xl bg-slate-50 border-none focus:ring-4 focus:ring-secondary/5 transition-all text-sm font-bold shadow-inner"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="companyName" className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Legal Entity</Label>
+                                    <Input
+                                        id="companyName"
+                                        type="text"
+                                        placeholder="Organization Name"
+                                        value={companyName}
+                                        onChange={(e) => setCompanyName(e.target.value)}
+                                        required
+                                        className="h-14 rounded-2xl bg-slate-50 border-none focus:ring-4 focus:ring-secondary/5 transition-all text-sm font-bold shadow-inner"
+                                    />
+                                </div>
                             </div>
-                            <div>
-                                <p className="font-semibold">Maria Borg</p>
-                                <p className="text-white/70 text-sm">HR Director, Malta Gaming Authority</p>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Corporate Email</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="officer@organization.mt"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="h-14 rounded-2xl bg-slate-50 border-none focus:ring-4 focus:ring-secondary/5 transition-all text-sm font-bold shadow-inner"
+                                />
                             </div>
-                        </div>
+
+                            <div className="grid sm:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <Label htmlFor="password" className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Security Key</Label>
+                                    <Input
+                                        id="password"
+                                        type="password"
+                                        placeholder="••••••••"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        minLength={8}
+                                        className="h-14 rounded-2xl bg-slate-50 border-none focus:ring-4 focus:ring-secondary/5 transition-all text-sm font-bold shadow-inner"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="confirmPassword" className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Confirm Key</Label>
+                                    <Input
+                                        id="confirmPassword"
+                                        type="password"
+                                        placeholder="••••••••"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        required
+                                        className="h-14 rounded-2xl bg-slate-50 border-none focus:ring-4 focus:ring-secondary/5 transition-all text-sm font-bold shadow-inner"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                <input
+                                    type="checkbox"
+                                    id="terms"
+                                    checked={acceptTerms}
+                                    onChange={(e) => setAcceptTerms(e.target.checked)}
+                                    className="mt-1 h-5 w-5 rounded-lg border-slate-200 text-secondary focus:ring-secondary transition-all"
+                                />
+                                <label htmlFor="terms" className="text-xs font-medium text-slate-500 leading-relaxed">
+                                    I certify that I am authorized to register on behalf of the stated legal entity and agree to the{" "}
+                                    <a href="#" className="text-secondary font-bold hover:underline">Compliance Standards</a> and <a href="#" className="text-secondary font-bold hover:underline">Data Protection Policy</a>.
+                                </label>
+                            </div>
+
+                            <Button
+                                type="submit"
+                                className="w-full h-16 bg-primary text-white rounded-2xl font-bold text-sm tracking-widest uppercase shadow-premium hover:shadow-premium-hover transition-all translate-y-0 hover:-translate-y-0.5"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <div className="flex items-center gap-2">
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        Provisioning...
+                                    </div>
+                                ) : "Initialize Enterprise Account"}
+                            </Button>
+                        </form>
                     </div>
-                </div>
+                </motion.div>
+
+                {/* Benefits / Social Proof */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                    className="mt-10 grid sm:grid-cols-3 gap-6"
+                >
+                    <Benefit icon={CheckCircle2} label="Real-time Alerts" />
+                    <Benefit icon={Shield} label="GDPR Compliant" />
+                    <Benefit icon={CheckCircle2} label="Instant Audits" />
+                </motion.div>
             </div>
+        </main>
+    );
+}
+
+function Benefit({ icon: Icon, label }: { icon: any, label: string }) {
+    return (
+        <div className="flex items-center justify-center gap-2 text-slate-400">
+            <Icon className="w-4 h-4 text-secondary" />
+            <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
         </div>
     );
 }

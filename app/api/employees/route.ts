@@ -34,21 +34,56 @@ export async function GET(request: Request) {
       .eq('id', session.user.id)
       .single();
 
-    if (!profile?.company_id) return NextResponse.json([]);
+    let company_id = profile?.company_id;
+
+    // AUTO-PROVISIONING: If no company exists, attempt to create one from metadata
+    if (!company_id) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const metadata = user.user_metadata;
+        const companyName = metadata?.company_name || 'Enterprise Account';
+        const fullName = metadata?.full_name || user.email?.split('@')[0] || 'Authorized Officer';
+
+        // 1. Create company
+        const { data: newCompany, error: compErr } = await supabase
+          .from('companies')
+          .insert({ name: companyName })
+          .select()
+          .single();
+
+        if (!compErr && newCompany) {
+          // 2. Create profile
+          const { error: profErr } = await supabase
+            .from('profiles')
+            .upsert({
+              id: user.id,
+              company_id: newCompany.id,
+              role: 'admin',
+              full_name: fullName
+            });
+
+          if (!profErr) {
+            company_id = newCompany.id;
+          }
+        }
+      }
+    }
+
+    if (!company_id) return NextResponse.json([]);
 
     // Query employees with visas
     const { data: employees, error } = await supabase
       .from('employees')
       .select('*, visas(*)')
-      .eq('company_id', profile.company_id);
+      .eq('company_id', company_id);
 
     if (error) throw error;
 
-    // Post-process: Calculate days_until_expiry and Order (Prompt 3)
+    // Post-process: Calculate days_until_expiry and Order
     const processedEmployees = employees.map(emp => {
       const visas = emp.visas || [];
       const activeVisa = visas.find((v: any) => v.status === 'valid' || v.status === 'active');
-      
+
       let days_until_expiry = null;
       if (activeVisa?.expiry_date) {
         days_until_expiry = differenceInDays(parseISO(activeVisa.expiry_date), new Date());
@@ -56,7 +91,6 @@ export async function GET(request: Request) {
 
       return { ...emp, days_until_expiry };
     }).sort((a, b) => {
-      // Order by days_until_expiry (soonest first)
       if (a.days_until_expiry === null) return 1;
       if (b.days_until_expiry === null) return -1;
       return a.days_until_expiry - b.days_until_expiry;
@@ -85,13 +119,41 @@ export async function POST(request: Request) {
       .eq('id', session.user.id)
       .single();
 
-    if (!profile?.company_id) return NextResponse.json({ error: 'No company' }, { status: 403 });
+    let company_id = profile?.company_id;
+
+    // AUTO-PROVISIONING: If no company exists, attempt to create one
+    if (!company_id) {
+      const metadata = session.user.user_metadata;
+      const companyName = metadata?.company_name || 'Enterprise Account';
+      const fullName = metadata?.full_name || session.user.email?.split('@')[0] || 'Authorized Officer';
+
+      const { data: newCompany, error: compErr } = await supabase
+        .from('companies')
+        .insert({ name: companyName })
+        .select()
+        .single();
+
+      if (compErr) throw new Error('Identity Initialization Failed: Could not create legal entity.');
+
+      const { error: profErr } = await supabase
+        .from('profiles')
+        .upsert({
+          id: session.user.id,
+          company_id: newCompany.id,
+          role: 'admin',
+          full_name: fullName
+        });
+
+      if (profErr) throw new Error('Identity Initialization Failed: Could not link user to entity.');
+
+      company_id = newCompany.id;
+    }
 
     const { data: employee, error } = await supabase
       .from('employees')
       .insert({
         ...validation.data,
-        company_id: profile.company_id,
+        company_id: company_id,
         status: 'active'
       })
       .select()

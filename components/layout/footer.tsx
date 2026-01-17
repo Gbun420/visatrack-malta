@@ -35,14 +35,16 @@ export function Footer() {
                 <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
                     {/* Brand Column */}
                     <div className="col-span-2">
-                        <Link href="/" className="flex items-center gap-2 mb-4">
-                            <div className="w-9 h-9 bg-gradient-to-br from-primary to-teal-400 rounded-lg flex items-center justify-center">
-                                <Shield className="w-5 h-5 text-white" />
+                        <Link href="/" className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl flex items-center justify-center">
+                                <Shield className="w-6 h-6 text-white" />
                             </div>
-                            <span className="text-xl font-bold text-white">VisaTrack</span>
+                            <span className="text-2xl font-display font-bold text-white tracking-tight">
+                                VisaTrack<span className="text-secondary">Malta</span>
+                            </span>
                         </Link>
-                        <p className="text-sm text-gray-400 mb-6 max-w-xs">
-                            Compliance made simple for Maltese employers hiring Third Country Nationals.
+                        <p className="text-sm text-slate-400 mb-8 max-w-xs leading-relaxed">
+                            The enterprise-grade standard for TCN compliance management in Malta. Precision tracking for your international workforce.
                         </p>
                         <div className="space-y-2 text-sm">
                             <div className="flex items-center gap-2">

@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Navigation } from "@/components/layout/navigation";
 import { Footer } from "@/components/layout/footer";
 import {
@@ -12,8 +15,9 @@ import {
   ArrowRight,
   Star,
   Zap,
-  Lock,
   Globe,
+  ExternalLink,
+  ChevronRight,
 } from "lucide-react";
 
 const features = [
@@ -21,421 +25,318 @@ const features = [
     icon: Clock,
     title: "Visa Expiry Tracking",
     description:
-      "Automatic monitoring of work permit and visa expiration dates with configurable alerts at 90, 60, and 30 days.",
+      "Automated monitoring of work permit and visa expiration dates with configurable multi-stage alerts.",
   },
   {
     icon: Bell,
-    title: "Smart Alerts",
+    title: "Smart Compliance Alerts",
     description:
-      "Proactive notifications via email and dashboard when documents are approaching expiry or action is required.",
+      "Proactive notifications via email and SMS when documents approach expiry or regulatory changes occur.",
   },
   {
     icon: FileCheck,
-    title: "Document Management",
+    title: "Document Vault",
     description:
-      "Secure storage for all employee documents including passports, visas, and work permits in one central location.",
+      "Enterprise-grade secure storage for passports, identity documents, and work permits with audit trails.",
   },
   {
     icon: Users,
-    title: "Employee Profiles",
+    title: "Workforce Management",
     description:
-      "Comprehensive employee records with complete visa history, document attachments, and compliance status.",
+      "Comprehensive digital records for your international workforce with full compliance history.",
   },
   {
     icon: TrendingUp,
-    title: "Compliance Dashboard",
+    title: "Real-time Analytics",
     description:
-      "Real-time compliance health score and visual analytics showing your workforce's documentation status.",
+      "Visual intelligence dashboards showing workforce compliance health and upcoming renewal pipelines.",
   },
   {
-    icon: Lock,
-    title: "Secure & GDPR Compliant",
+    icon: Shield,
+    title: "GDPR & Data Security",
     description:
-      "Enterprise-grade security with data encryption, audit logs, and full GDPR compliance for peace of mind.",
+      "Built on industry-leading security standards to ensure your sensitive employee data remains protected.",
   },
 ];
 
-const pricing = [
-  {
-    name: "Starter",
-    price: "€49",
-    period: "/month",
-    description: "Perfect for small businesses",
-    features: [
-      "Up to 25 employees",
-      "Email alerts",
-      "Basic reporting",
-      "Document storage (5GB)",
-      "Email support",
-    ],
-    cta: "Start Free Trial",
-    popular: false,
-  },
-  {
-    name: "Professional",
-    price: "€99",
-    period: "/month",
-    description: "For growing companies",
-    features: [
-      "Up to 100 employees",
-      "SMS & Email alerts",
-      "Advanced analytics",
-      "Document storage (25GB)",
-      "Priority support",
-      "API access",
-      "Custom branding",
-    ],
-    cta: "Start Free Trial",
-    popular: true,
-  },
-  {
-    name: "Enterprise",
-    price: "Custom",
-    period: "",
-    description: "For large organizations",
-    features: [
-      "Unlimited employees",
-      "Multi-location support",
-      "Dedicated account manager",
-      "Custom integrations",
-      "SLA guarantee",
-      "On-premise option",
-      "SSO/SAML",
-    ],
-    cta: "Contact Sales",
-    popular: false,
-  },
-];
+const fadeIn = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5 }
+};
 
-const testimonials = [
-  {
-    quote:
-      "VisaTrack has transformed how we manage our international workforce. We've reduced compliance incidents by 95% since implementation.",
-    author: "Maria Borg",
-    role: "HR Director",
-    company: "Malta Gaming Authority",
-    avatar: "MB",
-  },
-  {
-    quote:
-      "The automated alerts alone have saved us countless hours. We never miss a renewal deadline anymore.",
-    author: "James Azzopardi",
-    role: "Operations Manager",
-    company: "GrandHarbour Logistics",
-    avatar: "JA",
-  },
-  {
-    quote:
-      "Simple to use, incredibly effective. Our compliance health went from 72% to 100% in just two months.",
-    author: "Elena Vella",
-    role: "CEO",
-    company: "Fintech Solutions Malta",
-    avatar: "EV",
-  },
-];
-
-const stats = [
-  { value: "500+", label: "Companies" },
-  { value: "15,000+", label: "Employees Tracked" },
-  { value: "99.9%", label: "Uptime" },
-  { value: "24/7", label: "Support" },
-];
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white font-sans text-slate-900 selection:bg-accent/30">
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-50 via-white to-cyan-50" />
-        <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-bl from-primary/5 to-transparent" />
+      <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 overflow-hidden">
+        {/* Abstract Background */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] animate-pulse delay-700" />
+        </div>
 
-        {/* Animated circles */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full filter blur-3xl animate-pulse" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-400/10 rounded-full filter blur-3xl animate-pulse delay-1000" />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-              <Zap className="w-4 h-4" />
-              Trusted by 500+ Maltese Employers
-            </div>
-
-            {/* Headline */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight mb-6">
-              TCN Compliance{" "}
-              <span className="bg-gradient-to-r from-primary to-teal-500 bg-clip-text text-transparent">
-                Made Simple
-              </span>
-            </h1>
-
-            {/* Subheadline */}
-            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-              Track work permits, manage visa renewals, and stay compliant with
-              Malta&apos;s immigration requirements—all in one powerful platform.
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link
-                href="/register"
-                className="group flex items-center gap-2 bg-gradient-to-r from-primary to-teal-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 transition-all hover:-translate-y-1"
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            <motion.div
+              className="flex-1 text-center lg:text-left"
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+            >
+              <motion.div
+                className="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-1.5 rounded-full text-sm font-semibold mb-8 shadow-premium"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
               >
-                Start Free Trial
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2 text-gray-700 px-8 py-4 rounded-xl font-semibold text-lg border-2 border-gray-200 hover:border-primary hover:text-primary transition-all"
-              >
-                View Demo
-              </Link>
-            </div>
+                <Zap className="w-4 h-4 text-accent" />
+                <span>The Standard for Compliance in Malta</span>
+              </motion.div>
 
-            {/* Trust indicators */}
-            <div className="mt-12 flex items-center justify-center gap-8 text-sm text-gray-500">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                No credit card required
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                14-day free trial
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                Cancel anytime
-              </div>
-            </div>
-          </div>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight text-slate-900 leading-[1.1] mb-8">
+                Manage Your TCN Workforce with <span className="text-secondary">Precision</span>
+              </h1>
 
-          {/* Dashboard Preview */}
-          <div className="mt-20 relative">
-            <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent z-10 pointer-events-none" />
-            <div className="bg-white rounded-2xl shadow-2xl shadow-gray-200/60 border border-gray-100 overflow-hidden">
-              <div className="bg-gray-50 px-4 py-3 border-b border-gray-100 flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-400" />
-                <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                <div className="w-3 h-3 rounded-full bg-green-400" />
-                <span className="ml-4 text-xs text-gray-400">dashboard.visatrack.mt</span>
+              <p className="text-xl text-slate-500 mb-10 max-w-2xl leading-relaxed">
+                Automate visa tracking, work permit renewals, and document compliance for your international team. Designed for Maltese enterprises.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Link
+                  href="/register"
+                  className="group flex items-center justify-center gap-2 bg-primary text-white px-8 py-4 rounded-xl font-bold text-lg shadow-premium hover:shadow-premium-hover transition-all duration-300 hover:-translate-y-1"
+                >
+                  Start Your Free Trial
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className="flex items-center justify-center gap-2 bg-white text-slate-900 border border-slate-200 px-8 py-4 rounded-xl font-bold text-lg hover:bg-slate-50 transition-all duration-300"
+                >
+                  Explore Dashboard
+                  <ChevronRight className="w-5 h-5" />
+                </Link>
               </div>
-              <div className="p-6 bg-gradient-to-br from-gray-50 to-white">
-                {/* Stats Cards Preview */}
-                <div className="grid grid-cols-4 gap-4 mb-6">
-                  {[
-                    { label: "Total TCNs", value: "47", color: "text-gray-900" },
-                    { label: "Expiring Soon", value: "8", color: "text-amber-500" },
-                    { label: "Expired", value: "2", color: "text-red-500" },
-                    { label: "Compliance", value: "95%", color: "text-green-500" },
-                  ].map((stat, i) => (
-                    <div key={i} className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
-                      <p className="text-xs text-gray-500 uppercase tracking-wider">{stat.label}</p>
-                      <p className={`text-2xl font-bold mt-1 ${stat.color}`}>{stat.value}</p>
+
+              <div className="mt-12 flex items-center justify-center lg:justify-start gap-8">
+                <div className="flex -space-x-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center overflow-hidden">
+                      <div className="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300" />
                     </div>
                   ))}
                 </div>
-                {/* Table Preview */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="px-4 py-3 border-b bg-gray-50 flex justify-between items-center">
-                    <span className="font-semibold text-gray-700">Employee Compliance List</span>
-                    <div className="w-48 h-8 bg-gray-100 rounded-md" />
+                <div className="text-sm text-slate-500">
+                  <span className="font-bold text-slate-900">500+</span> teams staying compliant
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="flex-1 relative w-full max-w-2xl lg:max-w-none"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              {/* Decorative Elements */}
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-accent/20 rounded-full blur-2xl" />
+              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-secondary/20 rounded-full blur-3xl" />
+
+              <div className="relative bg-white rounded-2xl shadow-premium border border-slate-100 overflow-hidden lg:rotate-2 hover:rotate-0 transition-transform duration-700">
+                <div className="bg-slate-50 px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-slate-300" />
+                    <div className="w-3 h-3 rounded-full bg-slate-200" />
+                    <div className="w-3 h-3 rounded-full bg-slate-100" />
                   </div>
-                  <div className="divide-y divide-gray-50">
-                    {[1, 2, 3].map((row) => (
-                      <div key={row} className="px-4 py-3 flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-full bg-primary/10" />
-                        <div className="flex-1 space-y-1">
-                          <div className="h-3 w-32 bg-gray-100 rounded" />
-                          <div className="h-2 w-24 bg-gray-50 rounded" />
+                  <div className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Enterprise Dashboard</div>
+                </div>
+                <div className="p-8">
+                  {/* Dashboard Mockup Content */}
+                  <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="h-24 bg-slate-50 rounded-xl border border-slate-100 p-4">
+                      <div className="w-8 h-2 bg-slate-200 rounded mb-3" />
+                      <div className="w-16 h-6 bg-primary/10 rounded" />
+                    </div>
+                    <div className="h-24 bg-slate-50 rounded-xl border border-slate-100 p-4">
+                      <div className="w-8 h-2 bg-slate-200 rounded mb-3" />
+                      <div className="w-16 h-6 bg-accent/10 rounded" />
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center gap-4 py-3 border-b border-slate-50">
+                        <div className="w-10 h-10 rounded-lg bg-slate-100" />
+                        <div className="flex-1 space-y-2">
+                          <div className="h-2.5 w-32 bg-slate-200 rounded" />
+                          <div className="h-2 w-20 bg-slate-100 rounded" />
                         </div>
-                        <div className="h-6 w-20 bg-green-100 rounded-full" />
+                        <div className="w-16 h-5 bg-green-50 rounded-full flex items-center justify-center">
+                          <div className="w-10 h-1.5 bg-green-400 rounded-full" />
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Quote Section */}
+      <section className="py-20 bg-slate-900 overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-20 opacity-10">
+          <Globe className="w-64 h-64 text-white" />
+        </div>
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="flex justify-center mb-8">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Star key={i} className="w-6 h-6 text-accent fill-current" />
+              ))}
+            </div>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-10 leading-tight">
+              &quot;VisaTrack has fundamentally changed how we manage our international workforce. What used to be a spreadsheet headache is now a seamless, automated process.&quot;
+            </h2>
+            <div className="flex items-center justify-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-slate-700" />
+              <div className="text-left">
+                <div className="text-white font-bold">Elena Borg</div>
+                <div className="text-slate-400 text-sm">HR Director, Malta Tech Hub</div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section id="features" className="py-24 lg:py-32 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-20">
+            <h2 className="text-base font-bold text-secondary uppercase tracking-[0.2em] mb-4">Powerful Capabilities</h2>
+            <h3 className="text-4xl md:text-5xl font-display font-bold text-slate-900 mb-6">Designed for Compliance, Built for Performance</h3>
+            <p className="text-lg text-slate-600">Every feature you need to manage Third Country National employees within Malta&apos;s regulatory framework.</p>
+          </div>
+
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            variants={staggerContainer}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+          >
+            {features.map((feature, i) => (
+              <motion.div
+                key={i}
+                className="group bg-white p-8 rounded-2xl shadow-premium border border-slate-100 hover:shadow-premium-hover hover:border-accent/30 transition-all duration-300"
+                variants={fadeIn}
+              >
+                <div className="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <feature.icon className="w-7 h-7 text-primary" />
+                </div>
+                <h4 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h4>
+                <p className="text-slate-500 leading-relaxed">{feature.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Compliance Showcase */}
+      <section className="py-24 lg:py-32 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-slate-900 rounded-[32px] p-8 lg:p-16 relative overflow-hidden">
+            {/* Abstract light */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-[100px]" />
+
+            <div className="relative z-10 grid lg:grid-cols-2 items-center gap-16">
+              <div>
+                <div className="inline-flex items-center gap-2 bg-white/10 text-white px-4 py-1.5 rounded-full text-xs font-bold mb-6 backdrop-blur-md">
+                  <Globe className="w-4 h-4 text-accent" />
+                  <span>Regulatory Ready</span>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-8 leading-tight">
+                  Stay Ahead of <span className="text-accent underline decoration-accent/30 underline-offset-8">Regulatory Changes</span>
+                </h2>
+                <p className="text-xl text-slate-400 mb-10 leading-relaxed">
+                  Identity management and visa tracking is a moving target. Our platform continuously updates to align with Identity Malta and Jobsplus requirements.
+                </p>
+                <ul className="space-y-4 mb-10">
+                  {[
+                    "Automated Single Permit Renewals",
+                    "Key Employee Initiative (KEI) Support",
+                    "Jobsplus Termination Alerts",
+                    "Digital Passport Vault"
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-white font-medium">
+                      <CheckCircle2 className="w-5 h-5 text-accent" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <button className="flex items-center justify-center gap-2 bg-white text-slate-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-slate-100 transition-all">
+                  View Compliance Roadmap
+                  <ExternalLink className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="relative">
+                <div className="aspect-square bg-white shadow-premium rounded-2xl border border-white/10 p-2 overflow-hidden transform lg:rotate-6">
+                  <div className="w-full h-full bg-slate-50 rounded-xl flex items-center justify-center">
+                    <Shield className="w-32 h-32 text-slate-200" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, i) => (
-              <div key={i} className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stat.value}</div>
-                <div className="text-gray-400">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Everything You Need for TCN Compliance
+      {/* CTA Final */}
+      <section className="py-24 lg:py-32 text-center">
+        <div className="max-w-4xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-6xl font-display font-bold text-slate-900 mb-8 tracking-tight">
+              Ready to Secure Your Workforce?
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Powerful features designed specifically for Maltese employers managing
-              Third Country National employees.
+            <p className="text-xl text-slate-500 mb-12 max-w-2xl mx-auto">
+              Join the leading Maltese companies that trust VisaTrack for their TCN compliance management.
             </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, i) => (
-              <div
-                key={i}
-                className="group bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:border-primary/20 transition-all duration-300 hover:-translate-y-1"
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/register"
+                className="bg-primary text-white px-10 py-5 rounded-2xl font-bold text-xl shadow-premium hover:shadow-premium-hover transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="w-14 h-14 bg-gradient-to-br from-primary/10 to-teal-100 rounded-xl flex items-center justify-center mb-6 group-hover:from-primary group-hover:to-teal-500 transition-all">
-                  <feature.icon className="w-7 h-7 text-primary group-hover:text-white transition-colors" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Simple, Transparent Pricing
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Choose the plan that fits your business. All plans include a 14-day free trial.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {pricing.map((plan, i) => (
-              <div
-                key={i}
-                className={`relative rounded-2xl p-8 ${plan.popular
-                  ? "bg-gradient-to-br from-primary to-teal-600 text-white shadow-2xl shadow-primary/30 scale-105"
-                  : "bg-white border border-gray-200"
-                  }`}
+                Get Started Now
+              </Link>
+              <Link
+                href="#"
+                className="bg-white text-slate-900 border border-slate-200 px-10 py-5 rounded-2xl font-bold text-xl hover:bg-slate-50 transition-all duration-300"
               >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-900 text-xs font-bold px-4 py-1 rounded-full flex items-center gap-1">
-                    <Star className="w-3 h-3" /> MOST POPULAR
-                  </div>
-                )}
-                <h3 className={`text-xl font-semibold mb-2 ${plan.popular ? "text-white" : "text-gray-900"}`}>
-                  {plan.name}
-                </h3>
-                <p className={`text-sm mb-4 ${plan.popular ? "text-white/80" : "text-gray-500"}`}>
-                  {plan.description}
-                </p>
-                <div className="mb-6">
-                  <span className={`text-4xl font-bold ${plan.popular ? "text-white" : "text-gray-900"}`}>
-                    {plan.price}
-                  </span>
-                  <span className={plan.popular ? "text-white/80" : "text-gray-500"}>{plan.period}</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature, j) => (
-                    <li key={j} className="flex items-center gap-2">
-                      <CheckCircle2 className={`w-5 h-5 ${plan.popular ? "text-white" : "text-green-500"}`} />
-                      <span className={`text-sm ${plan.popular ? "text-white" : "text-gray-600"}`}>
-                        {feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href="/register"
-                  className={`block text-center py-3 rounded-lg font-semibold transition-all ${plan.popular
-                    ? "bg-white text-primary hover:bg-gray-100"
-                    : "bg-gray-900 text-white hover:bg-gray-800"
-                    }`}
-                >
-                  {plan.cta}
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Trusted by Leading Maltese Companies
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              See what our customers have to say about VisaTrack.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100"
-              >
-                <div className="flex items-center gap-1 mb-4">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="w-5 h-5 text-amber-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-6 leading-relaxed">&quot;{testimonial.quote}&quot;</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-teal-500 rounded-full flex items-center justify-center text-white font-semibold">
-                    {testimonial.avatar}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">{testimonial.author}</p>
-                    <p className="text-sm text-gray-500">
-                      {testimonial.role}, {testimonial.company}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section id="contact" className="py-24 bg-gradient-to-br from-primary to-teal-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Globe className="w-16 h-16 text-white/20 mx-auto mb-6" />
-          <h2 className="text-4xl font-bold text-white mb-4">
-            Ready to Stay Compliant?
-          </h2>
-          <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
-            Join 500+ Maltese employers who trust VisaTrack for their TCN compliance management.
-            Start your free trial today—no credit card required.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/register"
-              className="inline-flex items-center justify-center gap-2 bg-white text-primary px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-colors"
-            >
-              Get Started Free
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link
-              href="#"
-              className="inline-flex items-center justify-center gap-2 bg-white/10 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-colors border border-white/20"
-            >
-              Schedule a Demo
-            </Link>
-          </div>
+                Talk to Sales
+              </Link>
+            </div>
+            <p className="mt-8 text-sm text-slate-400">No credit card required · 14-day free trial</p>
+          </motion.div>
         </div>
       </section>
 
