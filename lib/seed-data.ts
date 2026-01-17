@@ -32,7 +32,44 @@ export async function seedDemoData() {
     if (companyError) throw new Error(`Company Error: ${companyError.message}`);
     const companyId = newCompany.id;
 
-    // 2. Define 5 Employees from specific countries
+    // 2. Create/Get Demo User
+    const demoEmail = 'demo@visatrack.mt';
+    const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
+      email: demoEmail,
+      password: 'demo123',
+      email_confirm: true
+    });
+
+    let userId;
+    if (authError) {
+      if (authError.message.includes('already registered')) {
+        const { data: existingUser } = await supabaseAdmin
+          .from('profiles')
+          .select('id')
+          .eq('full_name', 'Demo Admin') // Assuming profile exists
+          .single();
+
+        // Fallback: search by email in auth (if possible with admin)
+        const { data: users } = await supabaseAdmin.auth.admin.listUsers();
+        const existingAuthUser = users.users.find(u => u.email === demoEmail);
+        userId = existingAuthUser?.id;
+      } else {
+        throw new Error(`Auth Error: ${authError.message}`);
+      }
+    } else {
+      userId = authUser.user.id;
+    }
+
+    if (userId) {
+      await supabaseAdmin.from('profiles').upsert({
+        id: userId,
+        company_id: companyId,
+        role: 'admin',
+        full_name: 'Demo Admin'
+      });
+    }
+
+    // 3. Define 5 Employees from specific countries
     const today = new Date();
     const formatDate = (days: number) => {
       const d = new Date(today);

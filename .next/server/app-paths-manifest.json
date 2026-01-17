@@ -1,6 +1,10 @@
 {
-  "/register/page": "app/register/page.js",
+  "/api/employees/route": "app/api/employees/route.js",
   "/api/seed/route": "app/api/seed/route.js",
+  "/api/visas/route": "app/api/visas/route.js",
   "/login/page": "app/login/page.js",
-  "/page": "app/page.js"
+  "/dashboard/settings/page": "app/dashboard/settings/page.js",
+  "/dashboard/visas/page": "app/dashboard/visas/page.js",
+  "/dashboard/employees/page": "app/dashboard/employees/page.js",
+  "/dashboard/page": "app/dashboard/page.js"
 }
