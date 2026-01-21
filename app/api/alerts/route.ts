@@ -10,7 +10,7 @@ export async function GET(request: Request) {
         const { data: { session } } = await supabase.auth.getSession();
 
         if (!session) {
-            return NextResponse.json([]);
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         const { data: profile } = await supabase
@@ -20,7 +20,7 @@ export async function GET(request: Request) {
             .single();
 
         if (!profile?.company_id) {
-            return NextResponse.json([]);
+            return NextResponse.json({ error: 'Company not found' }, { status: 404 });
         }
 
         // Get alerts for this company
@@ -30,7 +30,10 @@ export async function GET(request: Request) {
             .eq("company_id", profile.company_id)
             .order("created_at", { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+            console.error('Database error:', error);
+            return NextResponse.json({ error: 'Failed to fetch alerts' }, { status: 500 });
+        }
 
         // Get employee info for alerts that have employee_id
         const employeeIds = Array.from(new Set(alerts?.filter(a => a.employee_id).map(a => a.employee_id)));
@@ -53,7 +56,7 @@ export async function GET(request: Request) {
         return NextResponse.json(alertsWithEmployees || []);
     } catch (error: any) {
         console.error("API Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
     }
 }
 
@@ -92,11 +95,14 @@ export async function POST(request: Request) {
             .select()
             .single();
 
-        if (error) throw error;
+        if (error) {
+            console.error('Database error:', error);
+            return NextResponse.json({ error: 'Failed to create alert' }, { status: 500 });
+        }
 
         return NextResponse.json(alert, { status: 201 });
     } catch (error: any) {
         console.error("API Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
     }
 }

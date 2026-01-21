@@ -142,18 +142,20 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Demo Credentials */}
-            <div className="mt-8 p-4 rounded-2xl bg-amber-50 border border-amber-100/50">
-              <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-2 text-center">Development Environment</p>
-              <div className="flex justify-between items-center text-[11px] font-bold">
-                <span className="text-slate-400 uppercase tracking-tighter">Identity:</span>
-                <span className="text-amber-700">demo@visatrack.mt</span>
+            {/* Demo Credentials - Only show in development */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className="mt-8 p-4 rounded-2xl bg-amber-50 border border-amber-100/50">
+                <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-2 text-center">Development Environment</p>
+                <div className="flex justify-between items-center text-[11px] font-bold">
+                  <span className="text-slate-400 uppercase tracking-tighter">Identity:</span>
+                  <span className="text-amber-700">demo@visatrack.mt</span>
+                </div>
+                <div className="flex justify-between items-center text-[11px] font-bold mt-1">
+                  <span className="text-slate-400 uppercase tracking-tighter">Key:</span>
+                  <span className="text-amber-700">demo123</span>
+                </div>
               </div>
-              <div className="flex justify-between items-center text-[11px] font-bold mt-1">
-                <span className="text-slate-400 uppercase tracking-tighter">Key:</span>
-                <span className="text-amber-700">demo123</span>
-              </div>
-            </div>
+            )}
           </div>
         </motion.div>
 

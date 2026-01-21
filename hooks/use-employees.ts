@@ -23,5 +23,9 @@ export function useEmployees(search?: string) {
   return useQuery({
     queryKey: ['employees', search],
     queryFn: () => fetchEmployees(search),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000, // 10 minutes
+    retry: 2, // Retry failed requests twice
+    refetchOnWindowFocus: false, // Disable automatic refetch on window focus to prevent unnecessary API calls
   });
 }

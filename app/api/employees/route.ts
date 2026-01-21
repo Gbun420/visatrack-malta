@@ -7,11 +7,11 @@ import { differenceInDays, parseISO } from 'date-fns';
 export const dynamic = 'force-dynamic';
 
 const employeeSchema = z.object({
-  first_name: z.string().min(1),
-  last_name: z.string().min(1),
-  email: z.string().email().optional().or(z.literal("")),
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email format").optional().or(z.literal("")),
   phone: z.string().optional(),
-  passport_number: z.string().min(1),
+  passport_number: z.string().min(1, "Passport number is required"),
   passport_expiry: z.string().optional().nullable(),
   nationality: z.string().optional(),
   position: z.string().optional(),
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
-      return NextResponse.json([]); // Return empty for MVP testing
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { data: profile } = await supabase
@@ -69,7 +69,9 @@ export async function GET(request: Request) {
       }
     }
 
-    if (!company_id) return NextResponse.json([]);
+    if (!company_id) {
+      return NextResponse.json({ error: 'Company not found' }, { status: 404 });
+    }
 
     // Query employees with visas
     const { data: employees, error } = await supabase
@@ -77,7 +79,10 @@ export async function GET(request: Request) {
       .select('*, visas(*)')
       .eq('company_id', company_id);
 
-    if (error) throw error;
+    if (error) {
+      console.error('Database error:', error);
+      return NextResponse.json({ error: 'Failed to fetch employees' }, { status: 500 });
+    }
 
     // Post-process: Calculate days_until_expiry and Order
     const processedEmployees = employees.map(emp => {
@@ -99,7 +104,7 @@ export async function GET(request: Request) {
     return NextResponse.json(processedEmployees);
   } catch (error: any) {
     console.error('API Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -108,7 +113,11 @@ export async function POST(request: Request) {
     const supabase = createRouteHandlerClient({ cookies });
     const body = await request.json();
     const validation = employeeSchema.safeParse(body);
-    if (!validation.success) return NextResponse.json(validation.error, { status: 400 });
+    
+    if (!validation.success) {
+      const errors = validation.error.errors.map(err => err.message).join(', ');
+      return NextResponse.json({ error: `Validation failed: ${errors}` }, { status: 400 });
+    }
 
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -159,9 +168,14 @@ export async function POST(request: Request) {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Database error:', error);
+      return NextResponse.json({ error: 'Failed to create employee' }, { status: 500 });
+    }
+    
     return NextResponse.json(employee, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('API Error:', error);
+    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
   }
 }

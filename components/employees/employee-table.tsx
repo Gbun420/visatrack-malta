@@ -4,6 +4,7 @@ import { Employee } from "@/types";
 import { format, parseISO } from "date-fns";
 import { VisaStatusBadge, EmploymentStatusBadge } from "./status-badge";
 import { motion } from "framer-motion";
+import { Calendar, Eye, User, Flag } from "lucide-react";
 
 interface EmployeeTableProps {
   employees: Employee[];
@@ -34,7 +35,7 @@ export function EmployeeTable({ employees }: EmployeeTableProps) {
           ) : (
             employees.map((employee, idx) => {
               const activeVisa = employee.visas?.find(
-                (v) => v.application_status === "active" || v.status === "valid" || v.status === "expired"
+                (v) => v.status === "valid" || v.status === "active"
               );
 
               return (
@@ -48,7 +49,7 @@ export function EmployeeTable({ employees }: EmployeeTableProps) {
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center font-bold text-slate-400 group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                        {employee.first_name[0]}{employee.last_name[0]}
+                        <User className="w-4 h-4" />
                       </div>
                       <div>
                         <p className="font-bold text-slate-900 leading-none mb-1">{employee.first_name} {employee.last_name}</p>
@@ -63,7 +64,8 @@ export function EmployeeTable({ employees }: EmployeeTableProps) {
                   </td>
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-slate-700">{employee.nationality}</span>
+                      <Flag className="w-4 h-4 text-slate-400" />
+                      <span className="text-sm font-bold text-slate-700">{employee.nationality || 'N/A'}</span>
                     </div>
                   </td>
                   <td className="px-6 py-5">
@@ -72,7 +74,8 @@ export function EmployeeTable({ employees }: EmployeeTableProps) {
                     </span>
                   </td>
                   <td className="px-6 py-5">
-                    <div className="flex flex-col">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-slate-400" />
                       <span className="text-[13px] font-bold text-slate-700">
                         {activeVisa?.expiry_date
                           ? format(parseISO(activeVisa.expiry_date), "MMM dd, yyyy")
@@ -86,7 +89,11 @@ export function EmployeeTable({ employees }: EmployeeTableProps) {
                     </div>
                   </td>
                   <td className="px-6 py-5 text-right">
-                    <button className="text-xs font-bold text-secondary hover:text-primary transition-colors underline underline-offset-4">
+                    <button 
+                      className="inline-flex items-center gap-2 text-xs font-bold text-secondary hover:text-primary transition-colors underline underline-offset-4"
+                      aria-label={`View details for ${employee.first_name} ${employee.last_name}`}
+                    >
+                      <Eye className="w-3 h-3" />
                       View Details
                     </button>
                   </td>
