@@ -32,26 +32,35 @@ export default function DashboardPage() {
 
   // Derived stats
   const expiringSoonCount = employees?.filter(emp => {
-    const activeVisa = emp.visas?.find(v => v.application_status === 'active' || v.status === 'valid');
+    const activeVisa = emp.visas?.find(v => v.status === 'valid' || v.status === 'active');
     if (!activeVisa) return false;
-    const days = Math.ceil((new Date(activeVisa.expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-    return days >= 0 && days < 90;
+    const expiryDate = new Date(activeVisa.expiry_date);
+    const today = new Date();
+    const diffTime = expiryDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays >= 0 && diffDays < 90;
   }).length || 0;
 
   const expiredCount = employees?.filter(emp => {
-    const activeVisa = emp.visas?.find(v => v.application_status === 'active' || v.status === 'valid' || v.status === 'expired');
+    const activeVisa = emp.visas?.find(v => v.status === 'valid' || v.status === 'active' || v.status === 'expired');
     if (!activeVisa) return false;
-    const days = (new Date(activeVisa.expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
-    return days < 0;
+    const expiryDate = new Date(activeVisa.expiry_date);
+    const today = new Date();
+    const diffTime = expiryDate.getTime() - today.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays < 0;
   }).length || 0;
 
   // Compliance Health Calculation
   const totalEmployees = employees?.length || 0;
   const validVisasCount = employees?.filter(emp => {
-    const activeVisa = emp.visas?.find(v => v.application_status === 'active' || v.status === 'valid');
+    const activeVisa = emp.visas?.find(v => v.status === 'valid' || v.status === 'active');
     if (!activeVisa) return false;
-    const days = (new Date(activeVisa.expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
-    return days >= 0;
+    const expiryDate = new Date(activeVisa.expiry_date);
+    const today = new Date();
+    const diffTime = expiryDate.getTime() - today.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays >= 0;
   }).length || 0;
 
   const complianceHealth = totalEmployees === 0

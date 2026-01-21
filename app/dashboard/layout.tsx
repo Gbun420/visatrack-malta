@@ -1,5 +1,6 @@
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { DashboardHeader } from "@/components/dashboard/header";
+import ErrorBoundary from "@/components/error-boundary";
 
 export default function DashboardLayout({
     children,
@@ -11,7 +12,11 @@ export default function DashboardLayout({
             <Sidebar />
             <div className="pl-64 transition-all duration-300">
                 <DashboardHeader />
-                <main className="p-6">{children}</main>
+                <main className="p-6">
+                  <ErrorBoundary>
+                    {children}
+                  </ErrorBoundary>
+                </main>
             </div>
         </div>
     );
